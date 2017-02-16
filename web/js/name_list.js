@@ -2,12 +2,16 @@
 
 var url = "api/name_list_get";
 
-$.getJSON(url, null, function(json_result) {
-    for (var i = 0; i < json_result.length; i++) {
-        $("#datatable tbody").append("<tr><td>"+json_result[i].id+"</td><td>"+json_result[i].firstName+"</td><td>"+json_result[i].lastName+"</td><td>"+json_result[i].email+"</td><td>"+json_result[i].phone.substring(0,3)+"-"+json_result[i].phone.substring(3,6)+"-"+json_result[i].phone.substring(6,10)+"</td><td>"+json_result[i].birthday+"</td></tr>");
-    }
-    console.log("Data loaded");
-});
+function loadData() {
+    $.getJSON(url, null, function(json_result) {
+        for (var i = 0; i < json_result.length; i++) {
+            $("#datatable tbody").append("<tr><td>"+json_result[i].id+"</td><td>"+json_result[i].first+"</td><td>"+json_result[i].last+"</td><td>"+json_result[i].email+"</td><td>"+json_result[i].phone.substring(0,3)+"-"+json_result[i].phone.substring(3,6)+"-"+json_result[i].phone.substring(6,10)+"</td><td>"+json_result[i].birthday+"</td></tr>");
+        }
+        console.log("Data loaded");
+    });
+}
+
+loadData();
 
 var addItemButton = $('#addItem');
 addItemButton.on("click", showDialogAdd);
@@ -50,14 +54,20 @@ function showDialogAdd() {
     $('#birthdayGlyph').removeClass("glyphicon-ok");
 }
 
+function clearData() {
+    $("#datatable td").remove();
+}
+
 var saveButton = $('#saveChanges');
 saveButton.on("click", saveChanges);
 
 function saveChanges() {
     console.log("Saving changes");
 
-    var firstName = $('#firstName').val();
-    var lastName = $('#lastName').val();
+    var valid_form = true;
+
+    var first = $('#firstName').val();
+    var last = $('#lastName').val();
     var email = $('#email').val();
     var phone = $('#phone').val();
     var birthday = $('#birthday').val();
@@ -65,10 +75,10 @@ function saveChanges() {
     var firstNameReg = /^[a-zA-Z\u0080-\u024F ']{3,20}$/i;
     var lastNameReg = /^[a-zA-Z\u0080-\u024F ']{3,20}$/i;
     var emailReg = /^([a-zA-z0-9_.+-])+\@(([a-zA-Z0-9-+\.)+([a-zA-Z0-9]{2,4}))+$/;
-    var phoneReg = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+    var phoneReg = /^[0-9]{10}$/;
     var birthdayReg = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
 
-    if (firstNameReg.test(firstName)) {
+    if (firstNameReg.test(first)) {
         $('#firstNameDiv').removeClass("has-error");
         $('#firstNameDiv').addClass("has-success");
         $('#firstNameGlyph').removeClass("glyphicon-remove");
@@ -81,9 +91,10 @@ function saveChanges() {
         $('#firstNameGlyph').addClass("glyphicon-remove");
         $('#firstNameGlyph').removeClass("glyphicon-ok");
         $('#firstNameStatus').val("(error)");
+        valid_form = false;
     }
 
-    if (lastNameReg.test(lastName)) {
+    if (lastNameReg.test(last)) {
         $('#lastNameDiv').removeClass("has-error");
         $('#lastNameDiv').addClass("has-success");
         $('#lastNameGlyph').removeClass("glyphicon-remove");
@@ -96,6 +107,7 @@ function saveChanges() {
         $('#lastNameGlyph').addClass("glyphicon-remove");
         $('#lastNameGlyph').removeClass("glyphicon-ok");
         $('#lastNameStatus').val("(error)");
+        valid_form = false;
     }
 
     if (emailReg.test(email)) {
@@ -111,6 +123,7 @@ function saveChanges() {
         $('#emailGlyph').addClass("glyphicon-remove");
         $('#emailGlyph').removeClass("glyphicon-ok");
         $('#emailStatus').val("(error)");
+        valid_form = false;
     }
 
     if (phoneReg.test(phone)) {
@@ -126,6 +139,7 @@ function saveChanges() {
         $('#phoneGlyph').addClass("glyphicon-remove");
         $('#phoneGlyph').removeClass("glyphicon-ok");
         $('#phoneStatus').val("(error)");
+        valid_form = false;
     }
 
     if (birthdayReg.test(birthday)) {
@@ -141,5 +155,35 @@ function saveChanges() {
         $('#birthdayGlyph').addClass("glyphicon-remove");
         $('#birthdayGlyph').removeClass("glyphicon-ok");
         $('#birthdayStatus').val("(error)");
+        valid_form = false;
+    }
+
+    if (valid_form == true) {
+        console.log("Form is valid");
+
+        var url = "api/name_list_edit";
+        var myFieldValue = $("#jqueryPostJSONField").val();
+        var dataToServer = { "first" : first,"last" : last,"email" : email,"phone" : phone,"birthday" : birthday };
+        console.log("Data: ", dataToServer);
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: JSON.stringify(dataToServer),
+            success: function(dataFromServer) {
+                console.log(dataFromServer);
+
+                clearData();
+                console.log("Data cleared");
+
+                loadData();
+                console.log("Data reloaded");
+            },
+            contentType: "application/json",
+            dataType: 'text' // Could be JSON or whatever too
+        });
+        $('#myModal').modal('hide');
+    }
+    else {
+        console.log("Form has errors")
     }
 }

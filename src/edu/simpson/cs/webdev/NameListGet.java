@@ -39,12 +39,12 @@ public class NameListGet extends HttpServlet {
             out.print(person.getId());
             out.print("\",");
 
-            out.print("\"firstName\" : ");
+            out.print("\"first\" : ");
             out.print("\"");
             out.print(person.getFirst());
             out.print("\",");
 
-            out.print("\"lastName\" : ");
+            out.print("\"last\" : ");
             out.print("\"");
             out.print(person.getLast());
             out.print("\",");
