@@ -75,7 +75,7 @@ function saveChanges() {
     var firstNameReg = /^[a-zA-Z\u0080-\u024F ']{3,20}$/i;
     var lastNameReg = /^[a-zA-Z\u0080-\u024F ']{3,20}$/i;
     var emailReg = /^([a-zA-z0-9_.+-])+\@(([a-zA-Z0-9-+\.)+([a-zA-Z0-9]{2,4}))+$/;
-    var phoneReg = /^[0-9]{10}$/;
+    var phoneReg = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
     var birthdayReg = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
 
     if (firstNameReg.test(first)) {
@@ -157,6 +157,8 @@ function saveChanges() {
         $('#birthdayStatus').val("(error)");
         valid_form = false;
     }
+
+    phone = phone.replace(/-/g,"");
 
     if (valid_form == true) {
         console.log("Form is valid");
