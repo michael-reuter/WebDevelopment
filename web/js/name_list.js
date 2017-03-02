@@ -5,10 +5,42 @@ var url = "api/name_list_get";
 function loadData() {
     $.getJSON(url, null, function(json_result) {
         for (var i = 0; i < json_result.length; i++) {
-            $("#datatable tbody").append("<tr><td>"+json_result[i].id+"</td><td>"+json_result[i].first+"</td><td>"+json_result[i].last+"</td><td>"+json_result[i].email+"</td><td>"+json_result[i].phone.substring(0,3)+"-"+json_result[i].phone.substring(3,6)+"-"+json_result[i].phone.substring(6,10)+"</td><td>"+json_result[i].birthday+"</td></tr>");
+            $("#datatable tbody").append("<tr><td>"+json_result[i].id+"</td><td>"+json_result[i].first+"</td><td>"+json_result[i].last+"</td><td>"+json_result[i].email+"</td><td>"+json_result[i].phone.substring(0,3)+"-"+json_result[i].phone.substring(3,6)+"-"+json_result[i].phone.substring(6,10)+"</td><td>"+json_result[i].birthday+"</td><td><button type='button' name='delete' class='deleteButton btn' value='" + json_result[i].id + "'>Delete</button></td></tr>");
         }
+
+        var deleteButtons = $(".deleteButton");
+        deleteButtons.on("click", deleteItem);
+
         console.log("Data loaded");
     });
+}
+
+function deleteItem(e) {
+    console.debug("Delete");
+    console.debug(e.target.value);
+
+    var id = e.target.value;
+
+    var url = "api/name_list_delete";
+    var myFieldValue = $("#jqueryPostJSONField").val();
+    var dataToServer = { "id" : id };
+    console.log("Data: ", dataToServer);
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: JSON.stringify(dataToServer),
+        success: function (dataFromServer) {
+            console.log(dataFromServer);
+
+            clearData();
+            console.log("Data cleared");
+
+            loadData();
+            console.log("Data reloaded");
+        },
+        contentType: "application/json",
+        dataType: 'text'
+    })
 }
 
 loadData();
@@ -74,7 +106,7 @@ function saveChanges() {
 
     var firstNameReg = /^[a-zA-Z\u0080-\u024F ']{3,20}$/i;
     var lastNameReg = /^[a-zA-Z\u0080-\u024F ']{3,20}$/i;
-    var emailReg = /^([a-zA-z0-9_.+-])+\@(([a-zA-Z0-9-+\.)+([a-zA-Z0-9]{2,4}))+$/;
+    var emailReg = /^([a-zA-z0-9_.-])+\@(([a-zA-z0-9_.-])+\.([a-zA-Z0-9]{2,4}))+$/;
     var phoneReg = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
     var birthdayReg = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
 
@@ -181,7 +213,7 @@ function saveChanges() {
                 console.log("Data reloaded");
             },
             contentType: "application/json",
-            dataType: 'text' // Could be JSON or whatever too
+            dataType: 'text'
         });
         $('#myModal').modal('hide');
     }
