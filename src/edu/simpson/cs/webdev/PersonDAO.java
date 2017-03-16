@@ -53,7 +53,7 @@ public class PersonDAO {
                 Person person = new Person();
 
                 // Get the data from the result set, and copy it to the Person object
-                person.setId(rs.getInt("id"));
+                person.setId(rs.getString("id"));
                 person.setFirst(rs.getString("first"));
                 person.setLast(rs.getString("last"));
                 person.setEmail(rs.getString("email"));
@@ -79,6 +79,7 @@ public class PersonDAO {
         // Done! Return the results
         return list;
     }
+
     public static void setPeople(Person person) {
         log.log(Level.FINE, "Set people");
 
@@ -125,6 +126,7 @@ public class PersonDAO {
             }
         }
     }
+
     public static void deletePerson(Person person) {
         log.log(Level.FINE, "Set people");
 
@@ -143,7 +145,55 @@ public class PersonDAO {
             // Create an object with all the info about our SQL statement to run.
             stmt = conn.prepareStatement(sql);
 
-            stmt.setString(1, String.valueOf(person.getId()));
+            stmt.setString(1, person.getId());
+
+            // Execute the SQL and get the results
+            stmt.executeUpdate();
+
+        } catch (SQLException se) {
+            log.log(Level.SEVERE, "SQL Error", se);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error", e);
+        } finally {
+            if (conn != null) {
+                try {
+                    stmt.close();
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Error", e);
+                }
+                try {
+                    conn.close();
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Error", e);
+                }
+            }
+        }
+    }
+
+    public static void updatePerson(Person person) {
+        log.log(Level.FINE, "Set people");
+
+        // Declare our variables
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        // Databases are unreliable. Use some exception handling
+        try {
+            // Get our database connection
+            conn = DBHelper.getConnection();
+
+            // This is a string that is our SQL query.
+            String sql = "update person set first=?, last=?, email=?, phone=?, birthday=? where id=?";
+
+            // Create an object with all the info about our SQL statement to run.
+            stmt = conn.prepareStatement(sql);
+
+            stmt.setString(1, person.getFirst());
+            stmt.setString(2, person.getLast());
+            stmt.setString(3, person.getEmail());
+            stmt.setString(4, person.getPhone());
+            stmt.setString(5, person.getBirthday());
+            stmt.setString(6, person.getId());
 
             // Execute the SQL and get the results
             stmt.executeUpdate();

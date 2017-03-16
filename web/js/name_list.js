@@ -5,11 +5,14 @@ var url = "api/name_list_get";
 function loadData() {
     $.getJSON(url, null, function(json_result) {
         for (var i = 0; i < json_result.length; i++) {
-            $("#datatable tbody").append("<tr><td>"+json_result[i].id+"</td><td>"+json_result[i].first+"</td><td>"+json_result[i].last+"</td><td>"+json_result[i].email+"</td><td>"+json_result[i].phone.substring(0,3)+"-"+json_result[i].phone.substring(3,6)+"-"+json_result[i].phone.substring(6,10)+"</td><td>"+json_result[i].birthday+"</td><td><button type='button' name='delete' class='deleteButton btn' value='" + json_result[i].id + "'>Delete</button></td></tr>");
+            $("#datatable tbody").append("<tr><td>"+json_result[i].id+"</td><td>"+json_result[i].first+"</td><td>"+json_result[i].last+"</td><td>"+json_result[i].email+"</td><td>"+json_result[i].phone.substring(0,3)+"-"+json_result[i].phone.substring(3,6)+"-"+json_result[i].phone.substring(6,10)+"</td><td>"+json_result[i].birthday+"</td><td><button type='button' name='edit' class='editButton btn' value='" + json_result[i].id + "'>Edit</button</td><td><button type='button' name='delete' class='deleteButton btn' value='" + json_result[i].id + "'>Delete</button></td></tr>");
         }
 
         var deleteButtons = $(".deleteButton");
         deleteButtons.on("click", deleteItem);
+
+        var editButtons = $(".editButton");
+        editButtons.on("click", editItem);
 
         console.log("Data loaded");
     });
@@ -22,7 +25,7 @@ function deleteItem(e) {
     var id = e.target.value;
 
     var url = "api/name_list_delete";
-    var myFieldValue = $("#jqueryPostJSONField").val();
+    //var myFieldValue = $("#jqueryPostJSONField").val();
     var dataToServer = { "id" : id };
     console.log("Data: ", dataToServer);
     $.ajax({
@@ -41,6 +44,54 @@ function deleteItem(e) {
         contentType: "application/json",
         dataType: 'text'
     })
+}
+
+function editItem(e) {
+    console.debug("Edit");
+    console.debug(e.target.value);
+
+    console.log("Opening edit item dialog");
+
+    var id = e.target.value;
+    var firstName = e.target.parentNode.parentNode.querySelectorAll("td")[1].innerHTML;
+    var lastName = e.target.parentNode.parentNode.querySelectorAll("td")[2].innerHTML;
+    var phone = e.target.parentNode.parentNode.querySelectorAll("td")[3].innerHTML;
+    var email = e.target.parentNode.parentNode.querySelectorAll("td")[4].innerHTML;
+    var birthday = e.target.parentNode.parentNode.querySelectorAll("td")[5].innerHTML;
+
+    $('#id').val(id);
+    $('#firstName').val(firstName);
+    $('#lastName').val(lastName);
+    $('#email').val(phone);
+    $('#phone').val(email);
+    $('#birthday').val(birthday);
+
+    $('#myModal').modal('show');
+
+    $('#firstNameDiv').removeClass("has-error");
+    $('#firstNameGlyph').removeClass("glyphicon-remove");
+    $('#firstNameDiv').removeClass("has-success");
+    $('#firstNameGlyph').removeClass("glyphicon-ok");
+
+    $('#lastNameDiv').removeClass("has-error");
+    $('#lastNameGlyph').removeClass("glyphicon-remove");
+    $('#lastNameDiv').removeClass("has-success");
+    $('#lastNameGlyph').removeClass("glyphicon-ok");
+
+    $('#phoneDiv').removeClass("has-error");
+    $('#phoneGlyph').removeClass("glyphicon-remove");
+    $('#phoneDiv').removeClass("has-success");
+    $('#phoneGlyph').removeClass("glyphicon-ok");
+
+    $('#emailDiv').removeClass("has-error");
+    $('#emailGlyph').removeClass("glyphicon-remove");
+    $('#emailDiv').removeClass("has-success");
+    $('#emailGlyph').removeClass("glyphicon-ok");
+
+    $('#birthdayDiv').removeClass("has-error");
+    $('#birthdayGlyph').removeClass("glyphicon-remove");
+    $('#birthdayDiv').removeClass("has-success");
+    $('#birthdayGlyph').removeClass("glyphicon-ok");
 }
 
 loadData();
@@ -98,6 +149,7 @@ function saveChanges() {
 
     var valid_form = true;
 
+    var id = $('#id').val();
     var first = $('#firstName').val();
     var last = $('#lastName').val();
     var email = $('#email').val();
@@ -196,8 +248,7 @@ function saveChanges() {
         console.log("Form is valid");
 
         var url = "api/name_list_edit";
-        var myFieldValue = $("#jqueryPostJSONField").val();
-        var dataToServer = { "first" : first,"last" : last,"email" : email,"phone" : phone,"birthday" : birthday };
+        var dataToServer = { "id" : id, "first" : first,"last" : last,"email" : email,"phone" : phone,"birthday" : birthday };
         console.log("Data: ", dataToServer);
         $.ajax({
             type: 'POST',

@@ -47,13 +47,19 @@ public class NameListEdit extends HttpServlet {
         Person fromJson = gson.fromJson(requestString, Person.class);
 
         // Make sure our field was set.
+        out.println("ID: "+fromJson.getId());
         out.println("First name: "+fromJson.getFirst());
         out.println("Last name: "+fromJson.getLast());
         out.println("Email: "+fromJson.getEmail());
         out.println("Phone: "+fromJson.getPhone());
         out.println("Birthday: "+fromJson.getBirthday());
 
-        PersonDAO.setPeople(fromJson);
+        if (fromJson.getId().matches("")) {
+            PersonDAO.setPeople(fromJson);
+        }
+        else {
+            PersonDAO.updatePerson(fromJson);
+        }
 
         Matcher m1 = firstValidationPattern.matcher(fromJson.getFirst());
         if (m1.find( )) {

@@ -1,17 +1,15 @@
 package edu.simpson.cs.webdev;
 
-import java.util.Date;
-
 public class Person {
-    private int id;
+    private String id;
     private String first;
     private String last;
     private String email;
     private String phone;
     private String birthday;
 
-    public int getId() {return id; }
-    public void setId(int id) { this.id = id; }
+    public String getId() {return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getFirst() {return first; }
     public void setFirst(String first) {this.first = first; }
