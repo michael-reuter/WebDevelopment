@@ -15,6 +15,18 @@
         <servlet-name>NameListDelete</servlet-name>
         <servlet-class>edu.simpson.cs.webdev.NameListDelete</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetLoginServlet</servlet-name>
+        <servlet-class>edu.simpson.cs.webdev.GetLoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>edu.simpson.cs.webdev.LoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InvalidateLoginServlet</servlet-name>
+        <servlet-class>edu.simpson.cs.webdev.InvalidateLoginServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>NameListGet</servlet-name>
@@ -27,5 +39,17 @@
     <servlet-mapping>
         <servlet-name>NameListDelete</servlet-name>
         <url-pattern>/api/name_list_delete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetLoginServlet</servlet-name>
+        <url-pattern>/api/get_login_servlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/api/login_servlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvalidateLoginServlet</servlet-name>
+        <url-pattern>/api/invalidate_login_servlet</url-pattern>
     </servlet-mapping>
 </web-app>
